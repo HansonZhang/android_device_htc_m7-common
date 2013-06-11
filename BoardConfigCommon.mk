@@ -35,7 +35,13 @@ BOARD_KERNEL_PAGESIZE := 2048
 BOARD_KERNEL_CMDLINE := console=ttyHSL0,115200,n8 androidboot.hardware=qcom user_debug=31
 BOARD_MKBOOTIMG_ARGS := --ramdisk_offset 0x01400000
 TARGET_KERNEL_CONFIG := cyanogenmod_m7_defconfig
-TARGET_KERNEL_SOURCE := kernel/htc/m7
+
+ifneq ($(filter m7cdwg,$(TARGET_DEVICE)),)
+	TARGET_PREBUILT_KERNEL := device/htc/m7cdwg/recovery/kernel
+else
+	TARGET_KERNEL_SOURCE := kernel/htc/m7
+endif
+
 
 # Flags
 COMMON_GLOBAL_CFLAGS += -DNEW_ION_API=1
@@ -94,11 +100,23 @@ BOARD_USERDATAIMAGE_PARTITION_SIZE := 27917287424
 BOARD_FLASH_BLOCK_SIZE := 131072
 
 # Custom Recovery
-ifneq ($(filter m7att m7tmo m7ul,$(TARGET_DEVICE)),)
-TARGET_RECOVERY_FSTAB := device/htc/m7-common/recovery/recovery.fstab.gsm
-else
-TARGET_RECOVERY_FSTAB := device/htc/m7-common/recovery/recovery.fstab.cdma
+# ifneq ($(filter m7att m7tmo m7ul,$(TARGET_DEVICE)),)
+# TARGET_RECOVERY_FSTAB := device/htc/m7-common/recovery/recovery.fstab.gsm
+# else
+# TARGET_RECOVERY_FSTAB := device/htc/m7-common/recovery/recovery.fstab.cdma
+# endif
+
+ifneq ($(filter m7cdwg,$(TARGET_DEVICE)),)
+    TARGET_RECOVERY_FSTAB := device/htc/m7-common/recovery/recovery.fstab.cdwg
 endif
+ifneq ($(filter m7spr,$(TARGET_DEVICE)),)
+    TARGET_RECOVERY_FSTAB := device/htc/m7-common/recovery/recovery.fstab.cdma
+endif
+ifneq ($(filter m7att m7tmo m7ul,$(TARGET_DEVICE)),)
+    TARGET_RECOVERY_FSTAB := device/htc/m7-common/recovery/recovery.fstab.gsm
+endif
+
+
 BOARD_CUSTOM_GRAPHICS := ../../../device/htc/m7-common/recovery/graphics.c
 BOARD_USE_CUSTOM_RECOVERY_FONT := \"roboto_23x41.h\"
 BOARD_HAS_NO_SELECT_BUTTON := true
